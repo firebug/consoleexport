@@ -1,0 +1,24 @@
+/* See license.txt for terms of usage */
+
+.DBG_CONSOLEEXPORT {
+    color: gray;
+}
+
+/********************************************************************************/
+
+#consoleExportAuto {
+    list-style-image: url(chrome://consoleexport/skin/autoexport-regular.png);
+}
+
+#consoleExportAuto:hover {
+    list-style-image: url(chrome://consoleexport/skin/autoexport-hover.png);
+}
+
+#consoleExportAuto[state="active"] {
+    list-style-image: url(chrome://consoleexport/skin/autoexport-active.png);
+}
+
+#consoleExportAuto[state="inprogress"] {
+    list-style-image: url(chrome://consoleexport/skin/autoexport-animated.png);
+}
+

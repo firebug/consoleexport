@@ -1,0 +1,26 @@
+﻿<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>consoleexport@janodvarko.cz</em:id>
+    <em:version>@VERSION@@RELEASE@</em:version>
+
+    <!-- Firefox -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>3.0</em:minVersion>
+        <em:maxVersion>4.0.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:name>ConsoleExport</em:name>
+    <em:description>Use this extension to export data from Firebug's Console panel.</em:description>
+    <em:creator>Jan Odvarko</em:creator>
+    <em:homepageURL>http://www.softwareishard.com/blog/consoleexport/</em:homepageURL>
+
+    <em:updateURL>https://getfirebug.com/releases/consoleexport/update.rdf</em:updateURL>
+  </Description>
+</RDF>

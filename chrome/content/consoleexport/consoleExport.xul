@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- See license.txt for terms of usage -->
+
+<?xml-stylesheet href="chrome://consoleexport/skin/consoleExport.css"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
+    <script src="chrome://consoleexport/content/consoleExport.js" type="application/x-javascript"/>
+    <script src="chrome://consoleexport/content/consoleAutomation.js" type="application/x-javascript"/>
+    <script src="chrome://consoleexport/content/consoleListener.js" type="application/x-javascript"/>
+    <script src="chrome://consoleexport/content/consoleUploader.js" type="application/x-javascript"/>
+
+    <commandset id="mainCommandSet">
+        <command id="cmd_consoleExportAuto" oncommand="Firebug.ConsoleExport.toggleAutoExport(FirebugContext)"/>
+    </commandset>
+
+    <toolbar id="fbToolbar">
+        <hbox id="fbToolbarInner">
+            <hbox id="fbConsoleButtons">
+                <toolbarbutton id="consoleExportAuto" command="cmd_consoleExportAuto"
+                    insertafter="fbToggleProfiling"
+                    tooltiptext="consoleexport.button.tooltip.Activate Auto Export" />
+
+                <!-- Console panel export -->
+                <toolbarbutton id="consoleExportMenu"
+                    insertafter="fbToggleProfiling"
+                    label="consoleexport.button.label.Export"
+                    tooltiptext="consoleexport.button.tooltip.Export Console Logs"
+                    type="menu">
+                    <menupopup>
+                        <menuitem id="consoleExportToFile"
+                            insertafter="fbToggleProfiling"
+                            label="consoleexport.menu.label.Save As"
+                            tooltiptext="consoleexport.menu.tooltip.Save As"
+                            oncommand="Firebug.ConsoleExport.onSaveAs(event, FirebugContext)" />
+                    </menupopup>
+                </toolbarbutton>
+
+                <toolbarseparator insertafter="fbToggleProfiling"/>
+
+                <!--
+                <menupopup>
+                    <menuitem id="consoleExportHelp"
+                        label="consoleexport.menu.label.Help"
+                        tooltiptext="consoleexport.menu.tooltip.Help"
+                        oncommand="Firebug.ConsoleExport.onHelp(event)" />
+                    <menuitem id="consoleExportAbout"
+                        label="consoleexport.menu.label.About"
+                        tooltiptext="consoleexport.menu.tooltip.About"
+                        oncommand="Firebug.ConsoleExport.onAbout(event, FirebugContext)" />
+                </menupopup>
+                -->
+            </hbox>
+        </hbox>
+    </toolbar>
+
+</overlay>

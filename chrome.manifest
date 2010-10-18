@@ -1,0 +1,5 @@
+content consoleexport  chrome/content/consoleexport/
+skin    consoleexport  classic/1.0    chrome/skin/classic/
+locale  consoleexport  en-US          chrome/locale/en-US/
+
+overlay chrome://firebug/content/firebugOverlay.xul         chrome://consoleexport/content/consoleExport.xul
