@@ -23,13 +23,19 @@ Firebug.ConsoleExport.Listener =
     register: function()
     {
         if (!this.registered)
+        {
             Firebug.Console.addListener(this);
+            Firebug.Profiler.addListener(this);
+        }
     },
 
     unregister: function()
     {
         if (this.registered)
+        {
             Firebug.Console.removeListener(this);
+            Firebug.Profiler.removeListener(this);
+        }
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -75,7 +81,27 @@ Firebug.ConsoleExport.Listener =
             msg: objects[0],
             href: context.getName(),
         });
-    }
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Firebug Profiler listener
+
+    startProfiling: function(context, title)
+    {
+        if (FBTrace.DBG_CONSOLEEXPORT)
+            FBTrace.sysout("consoleexport.Console.Listener.startProfiling; " + title);
+
+        // TODO: send to the server
+    },
+
+    stopProfiling: function(context, title, results, canceled)
+    {
+        if (FBTrace.DBG_CONSOLEEXPORT)
+            FBTrace.sysout("consoleexport.Console.Listener.stopProfiling; " + title +
+                (canceled ? " (canceled)" : ""), results);
+
+        // TODO: send to the server
+    },
 };
 
 // ************************************************************************************************
