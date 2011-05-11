@@ -10,32 +10,32 @@
     <script src="chrome://consoleexport/content/consoleUploader.js" type="application/x-javascript"/>
 
     <commandset id="mainCommandSet">
-        <command id="cmd_consoleExportAuto" oncommand="Firebug.ConsoleExport.toggleAutoExport(FirebugContext)"/>
+        <command id="cmd_consoleExportAuto" oncommand="Firebug.ConsoleExport.toggleAutoExport(Firebug.currentContext)"/>
     </commandset>
 
     <toolbar id="fbToolbar">
         <hbox id="fbToolbarInner">
             <hbox id="fbConsoleButtons">
-                <toolbarbutton id="consoleExportAuto" command="cmd_consoleExportAuto"
-                    insertafter="fbToggleProfiling"
-                    tooltiptext="consoleexport.button.tooltip.Activate Auto Export" />
 
                 <!-- Console panel export -->
                 <toolbarbutton id="consoleExportMenu"
-                    insertafter="fbToggleProfiling"
+                    insertbefore="fbToggleProfiling"
                     label="consoleexport.button.label.Export"
                     tooltiptext="consoleexport.button.tooltip.Export Console Logs"
                     type="menu">
                     <menupopup>
                         <menuitem id="consoleExportToFile"
-                            insertafter="fbToggleProfiling"
                             label="consoleexport.menu.label.Save As"
                             tooltiptext="consoleexport.menu.tooltip.Save As"
-                            oncommand="Firebug.ConsoleExport.onSaveAs(event, FirebugContext)" />
+                            oncommand="Firebug.ConsoleExport.onSaveAs(event, Firebug.currentContext)" />
                     </menupopup>
                 </toolbarbutton>
 
-                <toolbarseparator insertafter="fbToggleProfiling"/>
+                <toolbarbutton id="consoleExportAuto" command="cmd_consoleExportAuto"
+                    insertafter="consoleExportMenu"
+                    tooltiptext="consoleexport.button.tooltip.Activate Auto Export" />
+
+                <toolbarseparator insertafter="consoleExportAuto"/>
 
                 <!--
                 <menupopup>
@@ -46,7 +46,7 @@
                     <menuitem id="consoleExportAbout"
                         label="consoleexport.menu.label.About"
                         tooltiptext="consoleexport.menu.tooltip.About"
-                        oncommand="Firebug.ConsoleExport.onAbout(event, FirebugContext)" />
+                        oncommand="Firebug.ConsoleExport.onAbout(event, Firebug.currentContext)" />
                 </menupopup>
                 -->
             </hbox>

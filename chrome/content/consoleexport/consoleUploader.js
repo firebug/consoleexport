@@ -23,11 +23,12 @@ Firebug.ConsoleExport.Uploader =
     send: function(data)
     {
         var xml = this.buildPacket(data);
+        var url = Firebug.getPref(prefDomain, "serverURL");
 
         if (FBTrace.DBG_CONSOLEEXPORT)
-            FBTrace.sysout("consoleexport.Uploader.send;", xml);
+            FBTrace.sysout("consoleexport.Uploader.send; to: " +
+                (url ? url : "no server URL specified"), xml);
 
-        var url = Firebug.getPref(prefDomain, "serverURL");
         if (!url)
             return;
 
