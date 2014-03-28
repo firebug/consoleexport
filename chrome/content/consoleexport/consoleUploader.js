@@ -57,7 +57,7 @@ Firebug.ConsoleExport.Uploader =
             xml += "<cat>" + data.cat + "</cat>";
 
         if (data.msg)
-            xml += "<msg>" + data.msg + "</msg>";
+            xml += "<msg><![CDATA[" + data.msg + "]]></msg>";
 
         if (data.href)
             xml += "<href>" + data.href + "</href>";
