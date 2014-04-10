@@ -44,7 +44,7 @@ Firebug.ConsoleExport.Uploader =
             url: url,
             data: content,
             type: "POST",
-            contentType: "application/json",
+            contentType: contentType,
             complete: function(request)
             {
                 if (FBTrace.DBG_CONSOLEEXPORT)
