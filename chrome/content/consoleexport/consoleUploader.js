@@ -22,7 +22,15 @@ Firebug.ConsoleExport.Uploader =
 {
     send: function(data)
     {
-        var xml = this.buildPacket(data);
+        var format = Firebug.getPref(prefDomain, "format")
+        var content = null;
+        var contentType = "application/xml";
+        if (format != null && format.toLowerCase() == 'json') {
+            contentType = "application/json";
+            content = JSON.stringify(data);
+        } else {
+            content = this.buildPacket(data);
+        }
         var url = Firebug.getPref(prefDomain, "serverURL");
 
         if (FBTrace.DBG_CONSOLEEXPORT)
@@ -34,9 +42,9 @@ Firebug.ConsoleExport.Uploader =
 
         this.delayedAjax({
             url: url,
-            data: xml,
+            data: content,
             type: "POST",
-            contentType: "application/xml",
+            contentType: "application/json",
             complete: function(request)
             {
                 if (FBTrace.DBG_CONSOLEEXPORT)
@@ -69,7 +77,7 @@ Firebug.ConsoleExport.Uploader =
             xml += "<source>" + data.source + "</source>";
 
         xml += "</log>";
- 
+
         return xml;
     },
 
