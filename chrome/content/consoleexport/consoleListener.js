@@ -53,7 +53,7 @@ Firebug.ConsoleExport.Listener =
         {
             var message = null;
             if (typeof object == "string") {
-                message = JSON.stringify(object);
+                message = object;
             } else {
                 message = object.message;
             }
