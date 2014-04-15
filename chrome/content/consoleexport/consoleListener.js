@@ -51,6 +51,12 @@ Firebug.ConsoleExport.Listener =
 
         try
         {
+            var message = null;
+            if (typeof object == "string") {
+                message = object;
+            } else {
+                message = object.message;
+            }
             Firebug.ConsoleExport.Uploader.send({
                 className: className,
                 cat: object.category,
