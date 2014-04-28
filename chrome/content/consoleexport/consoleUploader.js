@@ -15,7 +15,13 @@ var prefDomain = "extensions.firebug.consoleexport";
 
 /**
  * This object implements sending messages to the server. The upload is based on XHR.
- * This object is also responsible for building XML messages.
+ * This object is also responsible for building XML or JSON messages.
+ * 
+ * Use "extensions.firebug.consoleexport.format" preference to specify whether
+ * XML or JSON should be generated. Possible values are:
+ * 
+ * xml (default)
+ * json
  */
 Firebug.ConsoleExport.Uploader =
 /** @lends Firebug.ConsoleExport.Uploader */
@@ -25,17 +31,24 @@ Firebug.ConsoleExport.Uploader =
         var format = Firebug.getPref(prefDomain, "format")
         var content = null;
         var contentType = "application/xml";
-        if (format != null && format.toLowerCase() == 'json') {
+
+        if (format != null && format.toLowerCase() == "json")
+        {
             contentType = "application/json";
             content = JSON.stringify(data);
-        } else {
+        }
+        else
+        {
             content = this.buildPacket(data);
         }
+
         var url = Firebug.getPref(prefDomain, "serverURL");
 
         if (FBTrace.DBG_CONSOLEEXPORT)
+        {
             FBTrace.sysout("consoleexport.Uploader.send; to: " +
-                (url ? url : "no server URL specified"), xml);
+                (url ? url : "no server URL specified"), content);
+        }
 
         if (!url)
             return;
