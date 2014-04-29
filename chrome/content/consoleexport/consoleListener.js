@@ -46,21 +46,24 @@ Firebug.ConsoleExport.Listener =
         object = unwrapObject(object);
 
         if (FBTrace.DBG_CONSOLEEXPORT)
+        {
             FBTrace.sysout("consoleexport.Console.Listener.log; " +
                 className, object);
+        }
 
         try
         {
             var message = null;
-            if (typeof object == "string") {
+
+            if (typeof object == "string")
                 message = object;
-            } else {
+            else
                 message = object.message;
-            }
+
             Firebug.ConsoleExport.Uploader.send({
                 className: className,
                 cat: object.category,
-                msg: object.message,
+                msg: message,
                 href: object.href ? object.href : context.getName(),
                 lineNo: object.lineNo,
                 source: object.source,
