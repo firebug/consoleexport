@@ -61,6 +61,7 @@ Firebug.ConsoleExport.Listener =
                 message = object.message;
 
             Firebug.ConsoleExport.Uploader.send({
+                docUrl: context.getName(),
                 className: className,
                 cat: object.category,
                 msg: message,
@@ -85,6 +86,7 @@ Firebug.ConsoleExport.Listener =
                 className, objects[0]);
 
         Firebug.ConsoleExport.Uploader.send({
+            docUrl: context.getName(),
             className: className,
             cat: "log",
             msg: objects[0],
