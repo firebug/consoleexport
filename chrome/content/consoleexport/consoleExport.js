@@ -14,7 +14,7 @@ var prefDomain = "extensions.firebug.consoleexport";
 // Module implementation
 
 /**
- * @module This object represents the main module of the extension. Among its responsiblity
+ * @module This object represents the main module of the extension. Among its responsibility
  * belongs UI internationalization, managing auto-export feature, basic registration within
  * Firebug framework and also a simple support for debugging.
  * All other objects in this extension are defined within this object (namespace).
@@ -139,7 +139,7 @@ Firebug.ConsoleExport = extend(Firebug.Module,
         var foStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
         file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0666);
         foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0);   // write, create, truncate
-        serializer.serializeToStream(doc, foStream, "");   // rememeber, doc is the DOM tree
+        serializer.serializeToStream(doc, foStream, "");   // remember, doc is the DOM tree
         foStream.close();
     },
 
@@ -206,7 +206,7 @@ Firebug.ConsoleExport.safeGetWindowLocation = function(win)
  * Listener for Firebug tracing console (console for debugging Firebug and Firebug extensions)
  * This listener customizes appearance of ConsoleExport messages in the console so, they are
  * easily distinguishable from other messages.
- * This extension uses extensions.firebug.DBG_CONSOLEEXPORT prefernce, which creates new
+ * This extension uses extensions.firebug.DBG_CONSOLEEXPORT preference, which creates new
  * CONSOLEEXPORT option in the Firebug tracing console.
  */
 Firebug.ConsoleExport.TraceListener =

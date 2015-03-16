@@ -17,7 +17,7 @@ var prefDomain = "extensions.firebug.consoleexport";
 
 /**
  * @module This module is implementing the auto-export feature and also responsible for
- * updating the UI. This feature is usign extensions.firebug.consoleexport.active
+ * updating the UI. This feature is using extensions.firebug.consoleexport.active
  * (false by default) preference to store its state across Firefox session.
  * This preference can be also used in automated processes when auto-export should be done
  * without manual interaction.
