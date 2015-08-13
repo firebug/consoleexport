@@ -6,6 +6,7 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
     <script src="chrome://consoleexport/content/consoleExport.js" type="application/x-javascript"/>
     <script src="chrome://consoleexport/content/consoleAutomation.js" type="application/x-javascript"/>
+    <script src="chrome://consoleexport/content/consoleDumper.js" type="application/x-javascript"/>
     <script src="chrome://consoleexport/content/consoleListener.js" type="application/x-javascript"/>
     <script src="chrome://consoleexport/content/consoleUploader.js" type="application/x-javascript"/>
 
