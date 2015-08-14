@@ -94,6 +94,7 @@ Firebug.ConsoleExport.Listener =
                     href: object.href ? object.href : context.getName(),
                     lineNo: object.lineNo,
                     source: object.source,
+                    time: new Date().getTime()
                 });
             }
         }
@@ -131,6 +132,7 @@ Firebug.ConsoleExport.Listener =
                     cat: "log",
                     msg: object,
                     href: context.getName(),
+                    time: new Date().getTime()
                 });
             }
         }
