@@ -61,6 +61,18 @@ Firebug.ConsoleExport.Listener =
                 message = object;
             else
                 message = object.message;
+            if(className == "spy")
+            {
+                message = object.method + " " + object.href;
+                var newObject = {
+                    href: object.href,
+                    cat: object.category,
+                    source: object.source,
+                    lineNo: object.sourceLink.href,
+                    source: object.sourceLink.line
+                }
+                object = newObject;
+            }
 
             var url = Firebug.getPref(prefDomain, "serverURL");
             var path = Firebug.getPref(prefDomain, "logFilePath");
@@ -78,7 +90,7 @@ Firebug.ConsoleExport.Listener =
                 Firebug.ConsoleExport.Dumper.dump({
                     className: className,
                     cat: object.category,
-                    msg: object.message,
+                    msg: message,
                     href: object.href ? object.href : context.getName(),
                     lineNo: object.lineNo,
                     source: object.source,
@@ -95,31 +107,32 @@ Firebug.ConsoleExport.Listener =
     logFormatted: function(context, objects, className, sourceLink)
     {
         objects = unwrapObject(objects);
+        for(var i=0; i<objects.length; i++){
+            var object = objects[i];
+            
+            if (FBTrace.DBG_CONSOLEEXPORT)
+                FBTrace.sysout("consoleexport.Console.Listener.logFormatted; " +
+                    className, object);
 
-        if (FBTrace.DBG_CONSOLEEXPORT)
-            FBTrace.sysout("consoleexport.Console.Listener.logFormatted; " +
-                className, objects[0]);
-
-        var url = Firebug.getPref(prefDomain, "serverURL");
-        var path = Firebug.getPref(prefDomain, "logFilePath");
-        if(url)
-        {
-            Firebug.ConsoleExport.Uploader.send({
-                className: className,
-                cat: "log",
-                msg: objects[0],
-                href: context.getName(),
-            });
-        }
-        if (path) {
-            Firebug.ConsoleExport.Dumper.dump({
-                className: className,
-                cat: object.category,
-                msg: object.message,
-                href: object.href ? object.href : context.getName(),
-                lineNo: object.lineNo,
-                source: object.source,
-            });
+            var url = Firebug.getPref(prefDomain, "serverURL");
+            var path = Firebug.getPref(prefDomain, "logFilePath");
+            if(url)
+            {
+                Firebug.ConsoleExport.Uploader.send({
+                    className: className,
+                    cat: "log",
+                    msg: object,
+                    href: context.getName(),
+                });
+            }
+            if (path) {
+                Firebug.ConsoleExport.Dumper.dump({
+                    className: className,
+                    cat: "log",
+                    msg: object,
+                    href: context.getName(),
+                });
+            }
         }
     },
 
