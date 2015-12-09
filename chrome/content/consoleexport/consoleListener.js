@@ -5,115 +5,113 @@ FBL.ns(function() { with (FBL) {
 // ************************************************************************************************
 // Constants
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+    const Cc = Components.classes;
+    const Ci = Components.interfaces;
 
-var prefDomain = "extensions.firebug.consoleexport";
+    var prefDomain = "extensions.firebug.consoleexport";
 
 // ************************************************************************************************
 // Module implementation
 
-/**
- * This object represents Console panel listener that listens for Console panel logs
- * and uses {@link Firebug.ConsoleExport.Uploader} to upload them to a specified server.
- */
-Firebug.ConsoleExport.Listener =
-/** @lends Firebug.ConsoleExport.Listener */
-{
-    registered: false,
-
-    register: function()
+    /**
+     * This object represents Console panel listener that listens for Console panel logs
+     * and uses {@link Firebug.ConsoleExport.Uploader} to upload them to a specified server.
+     */
+    Firebug.ConsoleExport.Listener =
+    /** @lends Firebug.ConsoleExport.Listener */
     {
-        if (!this.registered)
+        registered: false,
+
+        register: function()
         {
-            Firebug.Console.addListener(this);
-            Firebug.Profiler.addListener(this);
-        }
-    },
-
-    unregister: function()
-    {
-        if (this.registered)
-        {
-            Firebug.Console.removeListener(this);
-            Firebug.Profiler.removeListener(this);
-        }
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // Console listener
-
-    log: function(context, object, className, sourceLink)
-    {
-        object = unwrapObject(object);
-
-        if (FBTrace.DBG_CONSOLEEXPORT)
-        {
-            FBTrace.sysout("consoleexport.Console.Listener.log; " +
-                className, object);
-        }
-
-        try
-        {
-            var message = null;
-
-            if (typeof object == "string")
-                message = object;
-            else
-                message = object.message;
-            if(className == "spy")
+            if (!this.registered)
             {
-                message = object.method + " " + object.href;
-                var newObject = {
-                    href: object.href,
-                    cat: object.category,
-                    source: object.source,
-                    lineNo: object.sourceLink.href,
-                    source: object.sourceLink.line
-                }
-                object = newObject;
+                Firebug.Console.addListener(this);
+                Firebug.Profiler.addListener(this);
             }
+        },
 
-            var url = Firebug.getPref(prefDomain, "serverURL");
-            var path = Firebug.getPref(prefDomain, "logFilePath");
-            if (url) {
-               Firebug.ConsoleExport.Uploader.send({
-                    className: className,
-                    cat: object.category,
-                    msg: message,
-                    href: object.href ? object.href : context.getName(),
-                    lineNo: object.lineNo,
-                    source: object.source,
-                });
-            }
-            if (path) {
-                Firebug.ConsoleExport.Dumper.dump({
-                    className: className,
-                    cat: object.category,
-                    msg: message,
-                    href: object.href ? object.href : context.getName(),
-                    lineNo: object.lineNo,
-                    source: object.source,
-                    time: new Date().getTime()
-                });
-            }
-        }
-        catch (err)
+        unregister: function()
         {
-            if (FBTrace.DBG_CONSOLEEXPORT || FBTrace.DBG_ERRORS)
-                FBTrace.sysout("consoleexport.Console.Listener.log; EXCEPTION " + err, err);
-        }
-    },
+            if (this.registered)
+            {
+                Firebug.Console.removeListener(this);
+                Firebug.Profiler.removeListener(this);
+            }
+        },
 
-    logFormatted: function(context, objects, className, sourceLink)
-    {
-        objects = unwrapObject(objects);
-        for(var i=0; i<objects.length; i++){
-            var object = objects[i];
-            
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        // Console listener
+
+        log: function(context, object, className, sourceLink)
+        {
+            //object = unwrapObject(object);
+
+            if (FBTrace.DBG_CONSOLEEXPORT)
+            {
+                FBTrace.sysout("consoleexport.Console.Listener.log; " +
+                    className, object);
+            }
+
+            try
+            {
+
+                var message = null;
+                message = JSON.stringify(object,null);
+                //convert parametrized Console JSON object into a single message with all parameters
+                var msgJson = JSON.parse(message);
+                message = msgJson["0"];
+                for (var key in msgJson) {
+                    if(key!="0") {message = message.replace( /%s/, msgJson[key] );}
+                }
+
+                var url = Firebug.getPref(prefDomain, "serverURL");
+                var path = Firebug.getPref(prefDomain, "logFilePath");
+                if (url) {
+                    Firebug.ConsoleExport.Uploader.send({
+                        className: className,
+                        cat: object.category,
+                        msg: message,
+                        href: object.href ? object.href : context.getName(),
+                        lineNo: object.lineNo,
+                        source: object.source
+                    });
+                }
+                if (path) {
+                    Firebug.ConsoleExport.Dumper.dump({
+                        className: className,
+                        cat: object.category,
+                        msg: message,
+                        href: object.href ? object.href : context.getName(),
+                        lineNo: object.lineNo,
+                        source: object.source,
+                        time: new Date().toUTCString()
+                    });
+                }
+            }
+            catch (err)
+            {
+                if (FBTrace.DBG_CONSOLEEXPORT || FBTrace.DBG_ERRORS)
+                    FBTrace.sysout("consoleexport.Console.Listener.log; EXCEPTION " + err, err);
+            }
+        },
+
+        logFormatted: function(context, objects, className, sourceLink)
+        {
+            objects = unwrapObject(objects);
+
+
             if (FBTrace.DBG_CONSOLEEXPORT)
                 FBTrace.sysout("consoleexport.Console.Listener.logFormatted; " +
-                    className, object);
+                    className, objects[0]);
+
+            var message = null;
+            message = JSON.stringify(objects,null);
+            var msgJson = JSON.parse(message);
+            message = msgJson["0"];
+            for (var key in msgJson) {
+                if(key!="0") {message = message.replace( /%s/, msgJson[key] );}
+            }
 
             var url = Firebug.getPref(prefDomain, "serverURL");
             var path = Firebug.getPref(prefDomain, "logFilePath");
@@ -122,42 +120,42 @@ Firebug.ConsoleExport.Listener =
                 Firebug.ConsoleExport.Uploader.send({
                     className: className,
                     cat: "log",
-                    msg: object,
-                    href: context.getName(),
+                    msg: message,
+                    href: context.getName()
                 });
             }
             if (path) {
                 Firebug.ConsoleExport.Dumper.dump({
                     className: className,
                     cat: "log",
-                    msg: object,
+                    msg: message,
                     href: context.getName(),
-                    time: new Date().getTime()
+                    time: new Date().toUTCString()
                 });
             }
-        }
-    },
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // Firebug Profiler listener
+        },
 
-    startProfiling: function(context, title)
-    {
-        if (FBTrace.DBG_CONSOLEEXPORT)
-            FBTrace.sysout("consoleexport.Console.Listener.startProfiling; " + title);
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        // Firebug Profiler listener
 
-        // TODO: send to the server
-    },
+        startProfiling: function(context, title)
+        {
+            if (FBTrace.DBG_CONSOLEEXPORT)
+                FBTrace.sysout("consoleexport.Console.Listener.startProfiling; " + title);
 
-    stopProfiling: function(context, title, results, canceled)
-    {
-        if (FBTrace.DBG_CONSOLEEXPORT)
-            FBTrace.sysout("consoleexport.Console.Listener.stopProfiling; " + title +
-                (canceled ? " (canceled)" : ""), results);
+            // TODO: send to the server
+        },
 
-        // TODO: send to the server
-    },
-};
+        stopProfiling: function(context, title, results, canceled)
+        {
+            if (FBTrace.DBG_CONSOLEEXPORT)
+                FBTrace.sysout("consoleexport.Console.Listener.stopProfiling; " + title +
+                    (canceled ? " (canceled)" : ""), results);
+
+            // TODO: send to the server
+        },
+    };
 
 // ************************************************************************************************
 }});
