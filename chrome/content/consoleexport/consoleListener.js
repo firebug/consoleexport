@@ -108,34 +108,69 @@ Firebug.ConsoleExport.Listener =
     logFormatted: function(context, objects, className, sourceLink)
     {
         objects = unwrapObject(objects);
-        for(var i=0; i<objects.length; i++){
-            var object = objects[i];
-            
-            if (FBTrace.DBG_CONSOLEEXPORT)
-                FBTrace.sysout("consoleexport.Console.Listener.logFormatted; " +
-                    className, object);
 
-            var url = Firebug.getPref(prefDomain, "serverURL");
-            var path = Firebug.getPref(prefDomain, "logFilePath");
-            if(url)
-            {
-                Firebug.ConsoleExport.Uploader.send({
-                    className: className,
-                    cat: "log",
-                    msg: object,
-                    href: context.getName(),
-                });
+        if (FBTrace.DBG_CONSOLEEXPORT)
+            FBTrace.sysout("consoleexport.Console.Listener.logFormatted; " +
+                className, objects);
+
+        //format console objects with patterned messages
+        var message = this.formatConsoleObjects(objects);
+
+        var url = Firebug.getPref(prefDomain, "serverURL");
+        var path = Firebug.getPref(prefDomain, "logFilePath");
+        if(url)
+        {
+            Firebug.ConsoleExport.Uploader.send({
+                className: className,
+                cat: "log",
+                msg: message,
+                href: context.getName(),
+            });
+        }
+        if (path) {
+            Firebug.ConsoleExport.Dumper.dump({
+                className: className,
+                cat: "log",
+                msg: message,
+                href: context.getName(),
+                time: new Date().getTime()
+            });
+        }
+
+    },
+
+    /**
+     * This method generates a formatted console message from a console objects array.
+     * Formatted console message may include printf-like string substitution patterns.
+     * In such cases, array's first element is the console message without substitutions.
+     * Rest of array contains the parameters to be substituted in console message.
+     *
+     * Refer to {@Link https://getfirebug.com/wiki/index.php/Console.log#Parameters} for more info.
+     */
+    formatConsoleObjects: function(objects) {
+
+        //empty array -> return empty string
+        if(objects.length==0) {return "";}
+
+        //console message does not include patterns (%) -> return original message
+        if(objects.length==1) {return objects[0];}
+
+        //handle console message with patterns
+        var formattedMessage = objects[0]; //message with patterns
+        var patternsParameters = Array.prototype.slice.call(objects,1); //patterns parameters
+        //replace '%[a-z]' strings with their corresponding pattern parameters.
+        for (var i = 0; i < patternsParameters.length; i++) {
+            var patternParam = patternsParameters[i];
+            //convert parameters objects to their JSON representation.
+            if(typeof patternParam === 'object') {
+                formattedMessage = formattedMessage.replace(/%[a-z]/, JSON.stringify(patternParam));
             }
-            if (path) {
-                Firebug.ConsoleExport.Dumper.dump({
-                    className: className,
-                    cat: "log",
-                    msg: object,
-                    href: context.getName(),
-                    time: new Date().getTime()
-                });
+            //other parameters do not need any special handling.
+            else {
+                formattedMessage = formattedMessage.replace(/%[a-z]/, patternParam);
             }
         }
+        return formattedMessage;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
