@@ -76,26 +76,21 @@ Firebug.ConsoleExport.Listener =
 
             var url = Firebug.getPref(prefDomain, "serverURL");
             var path = Firebug.getPref(prefDomain, "logFilePath");
+            var messageData = {
+                className: className,
+                cat: object.category,
+                msg: message,
+                href: object.href ? object.href : context.getName(),
+                lineNo: object.lineNo,
+                source: object.source,
+                time: new Date().getTime()
+            };
+
             if (url) {
-               Firebug.ConsoleExport.Uploader.send({
-                    className: className,
-                    cat: object.category,
-                    msg: message,
-                    href: object.href ? object.href : context.getName(),
-                    lineNo: object.lineNo,
-                    source: object.source,
-                });
+               Firebug.ConsoleExport.Uploader.send(messageData);
             }
             if (path) {
-                Firebug.ConsoleExport.Dumper.dump({
-                    className: className,
-                    cat: object.category,
-                    msg: message,
-                    href: object.href ? object.href : context.getName(),
-                    lineNo: object.lineNo,
-                    source: object.source,
-                    time: new Date().getTime()
-                });
+                Firebug.ConsoleExport.Dumper.dump(messageData);
             }
         }
         catch (err)
