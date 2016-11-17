@@ -21,7 +21,7 @@ Firebug.ConsoleExport.Dumper = extend(Firebug.Module,
 /** @lends Firebug.ConsoleExport.Dumper */
 {
     initialize: function(){
-        
+
         if (FBTrace.DBG_CONSOLEEXPORT)
             FBTrace.sysout("initialize consoleexport.Dumper.dump");
         this.dumps = [];
@@ -29,10 +29,10 @@ Firebug.ConsoleExport.Dumper = extend(Firebug.Module,
 
     },
     shutdown: function(){
-        
+
         Firebug.Module.shutdown.apply(this, arguments);
 
-        
+
         if (FBTrace.DBG_CONSOLEEXPORT)
             FBTrace.sysout("shutdown consoleexport.Dumper.dump with dumps.length="+this.dumps.length);
 
@@ -41,13 +41,24 @@ Firebug.ConsoleExport.Dumper = extend(Firebug.Module,
             return;
         }
 
+        var dumpOnMessage = Firebug.getPref(prefDomain, "dumpOnMessage");
+        if (dumpOnMessage) {
+            return;
+        }
+
         var content;
         var format = Firebug.getPref(prefDomain, "format")
         if (format != null && format.toLowerCase() == "json"){
             content = JSON.stringify(this.dumps);
         }
+        else if (format.toLowerCase() == "text"){
+            content = "";
+            for(var i=0; i<this.dumps.length; i++){
+                content += this.buildText(this.dumps[i]);
+            }
+        }
         else{
-           content ="<logs>";
+            content ="<logs>";
             for(var i=0; i<this.dumps.length; i++){
                 content += this.buildPacket(this.dumps[i]);
             }
@@ -60,6 +71,28 @@ Firebug.ConsoleExport.Dumper = extend(Firebug.Module,
     },
     dump: function(data)
     {
+        var dumpOnMessage = Firebug.getPref(prefDomain, "dumpOnMessage");
+        var path = Firebug.getPref(prefDomain, "logFilePath");
+
+        if (dumpOnMessage && path) {
+            var format = Firebug.getPref(prefDomain, "format")
+            if (format != null && format.toLowerCase() == "json"){
+                content = JSON.stringify(data);
+            }
+            else if (format.toLowerCase() == "text"){
+                content = this.buildText(data);
+            }
+            else{
+                content ="<logs>";
+                content += this.buildPacket(data);
+                content +="</logs>";
+            }
+            this.writeToFile({
+                path: path,
+                data: content + "\n"
+            });
+        }
+
         this.dumps.push(data);
     },
 
@@ -91,6 +124,20 @@ Firebug.ConsoleExport.Dumper = extend(Firebug.Module,
         xml += "</log>";
 
         return xml;
+    },
+
+    buildText: function(data) {
+        var text = "";
+
+        if (data.href)
+            text += data.href;
+
+        if (data.lineNo)
+            text += ":" + data.lineNo;
+
+        text += " - " + data.msg;
+
+        return text;
     },
 
     dateToJSON: function (date){
